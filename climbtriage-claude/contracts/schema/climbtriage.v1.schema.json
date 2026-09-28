@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://climbtriage.app/schema/climbtriage.v1.schema.json",
+  "title": "ClimbTriage contracts v1",
+  "description": "Versioned data contracts shared by the Android app and the backend. See docs/05-contracts.md.",
+  "type": "object",
+  "required": ["schema"],
+  "properties": {
+    "schema": { "const": "climbtriage.v1" },
+    "capture": { "$ref": "#/$defs/Capture" },
+    "wallVersions": { "type": "array", "items": { "$ref": "#/$defs/WallVersion" } },
+    "routeVersions": { "type": "array", "items": { "$ref": "#/$defs/RouteVersion" } },
+    "personTracks": { "type": "array", "items": { "$ref": "#/$defs/PersonTrack" } },
+    "analysisRuns": { "type": "array", "items": { "$ref": "#/$defs/AnalysisRun" } },
+    "corrections": { "type": "array", "items": { "$ref": "#/$defs/Correction" } },
+    "contactEvents": { "type": "array", "items": { "$ref": "#/$defs/ContactEvent" } },
+    "attempts": { "type": "array", "items": { "$ref": "#/$defs/Attempt" } }
+  },
+  "$defs": {
+    "CoordinateSystem": { "enum": ["video_px", "frame_norm", "inference_norm", "wall_norm"] },
+    "Validity": { "enum": ["VALID", "LOW_CONFIDENCE", "AMBIGUOUS", "LOST", "NOT_ANALYZED"] },
+    "Point": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+    "BBox": {
+      "description": "[x, y, w, h] in the declared coordinate system",
+      "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4
+    },
+    "Provenance": {
+      "type": "object",
+      "required": ["kind", "name", "version"],
+      "properties": {
+        "kind": { "enum": ["model", "heuristic", "user", "fixture"] },
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "runId": { "type": ["string", "null"] },
+        "configHash": { "type": ["string", "null"] }
+      }
+    },
+    "Capture": {
+      "type": "object",
+      "required": ["id", "createdAt", "source", "mediaSha256", "video", "timebase"],
+      "properties": {
+        "id": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "source": { "enum": ["recorded", "imported"] },
+        "mediaSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "video": {
+          "type": "object",
+          "required": ["widthPx", "heightPx", "rotationDeg", "mirrored", "durationUs"],
+          "properties": {
+            "widthPx": { "type": "integer", "minimum": 1 },
+            "heightPx": { "type": "integer", "minimum": 1 },
+            "rotationDeg": { "enum": [0, 90, 180, 270] },
+            "mirrored": { "type": "boolean" },
+            "displayWidthPx": { "type": "integer" },
+            "displayHeightPx": { "type": "integer" },
+            "durationUs": { "type": "integer", "minimum": 0 },
+            "codec": { "type": ["string", "null"] },
+            "nominalFps": { "type": ["number", "null"], "description": "Informational only; never used for timing." }
+          }
+        },
+        "timebase": {
+          "type": "object",
+          "required": ["kind", "ptsUs"],
+          "properties": {
+            "kind": { "const": "media_pts" },
+            "ptsUs": { "type": "array", "items": { "type": "integer" }, "description": "Display-order presentation timestamps of every video sample." }
+          }
+        },
+        "device": {
+          "type": "object",
+          "properties": {
+            "manufacturer": { "type": "string" }, "model": { "type": "string" }, "sdkInt": { "type": "integer" }
+          }
+        },
+        "cameraFacing": { "enum": ["back", "front", "external", "unknown"] },
+        "stationaryClaim": { "type": "boolean" },
+        "stillness": {
+          "type": ["object", "null"],
+          "properties": {
+            "verdict": { "enum": ["STILL", "MOVED", "UNKNOWN"] },
+            "maxShiftNorm": { "type": "number" },
+            "movedFrameTimesUs": { "type": "array", "items": { "type": "integer" } },
+            "method": { "type": "string" }
+          }
+        },
+        "depth": { "type": ["object", "null"], "description": "Reserved (M5). Absent in v1 captures." },
+        "intrinsics": {
+          "type": ["object", "null"],
+          "properties": { "fx": { "type": "number" }, "fy": { "type": "number" }, "cx": { "type": "number" }, "cy": { "type": "number" } }
+        },
+        "calibration": {
+          "type": ["object", "null"],
+          "properties": { "validated": { "type": "boolean" }, "method": { "type": "string" } }
+        }
+      }
+    },
+    "Hold": {
+      "type": "object",
+      "required": ["id", "kind", "polygon", "coords", "provenance"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^h_[0-9A-Z]{26}$" },
+        "kind": { "enum": ["hold", "volume", "unknown"] },
+        "coords": { "$ref": "#/$defs/CoordinateSystem" },
+        "polygon": { "type": "array", "items": { "$ref": "#/$defs/Point" }, "minItems": 3 },
+        "bbox": { "$ref": "#/$defs/BBox" },
+        "color": {
+          "type": ["object", "null"],
+          "properties": {
+            "lab": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+            "hex": { "type": "string" },
+            "method": { "type": "string" }
+          }
+        },
+        "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "provenance": { "$ref": "#/$defs/Provenance" },
+        "parents": { "type": "array", "items": { "type": "string" } },
+        "retired": { "type": "boolean" }
+      }
+    },
+    "WallVersion": {
+      "type": "object",
+      "required": ["id", "wallId", "version", "coords", "holds"],
+      "properties": {
+        "id": { "type": "string" },
+        "wallId": { "type": "string" },
+        "version": { "type": "integer", "minimum": 1 },
+        "parentVersionId": { "type": ["string", "null"] },
+        "reason": { "enum": ["initial", "correction", "reset"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "coords": { "const": "wall_norm" },
+        "referenceCaptureId": { "type": "string" },
+        "holds": { "type": "array", "items": { "$ref": "#/$defs/Hold" } },
+        "sourceRunIds": { "type": "array", "items": { "type": "string" } },
+        "correctionSeq": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "RouteVersion": {
+      "type": "object",
+      "required": ["id", "routeId", "version", "wallVersionId", "routeType", "members", "startHoldIds", "finishHoldIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "routeId": { "type": "string" },
+        "version": { "type": "integer", "minimum": 1 },
+        "wallVersionId": { "type": "string" },
+        "name": { "type": ["string", "null"] },
+        "grade": { "type": ["string", "null"] },
+        "colorHint": { "type": ["string", "null"] },
+        "routeType": { "enum": ["boulder", "toprope", "lead", "circuit"] },
+        "members": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "startHoldIds": { "type": "array", "items": { "type": "string" }, "maxItems": 4 },
+        "finishHoldIds": { "type": "array", "items": { "type": "string" }, "maxItems": 2 },
+        "displayNumbers": { "type": "object", "additionalProperties": { "type": "integer" } },
+        "rules": {
+          "type": "object",
+          "properties": {
+            "startRule": { "enum": ["hands_on_start_feet_off_floor", "sit_start", "custom"] },
+            "finishRule": { "enum": ["matched_finish_dwell", "touch_finish", "top_out", "custom"] }
+          }
+        }
+      }
+    },
+    "Landmark": {
+      "type": "object",
+      "required": ["name", "x", "y"],
+      "properties": {
+        "name": { "type": "string" },
+        "x": { "type": "number" }, "y": { "type": "number" }, "z": { "type": ["number", "null"] },
+        "visibility": { "type": ["number", "null"] }, "presence": { "type": ["number", "null"] }
+      }
+    },
+    "PoseSample": {
+      "type": "object",
+      "required": ["tUs", "frameIndex", "validity", "coords", "landmarks"],
+      "properties": {
+        "tUs": { "type": "integer" },
+        "frameIndex": { "type": "integer" },
+        "validity": { "$ref": "#/$defs/Validity" },
+        "coords": { "$ref": "#/$defs/CoordinateSystem" },
+        "skeleton": { "enum": ["mediapipe33", "coco17"] },
+        "landmarks": { "type": "array", "items": { "$ref": "#/$defs/Landmark" } },
+        "bbox": { "oneOf": [{ "$ref": "#/$defs/BBox" }, { "type": "null" }] },
+        "associationCost": { "type": ["number", "null"] }
+      },
+      "allOf": [{
+        "if": { "properties": { "validity": { "enum": ["AMBIGUOUS", "LOST", "NOT_ANALYZED"] } } },
+        "then": { "properties": { "landmarks": { "maxItems": 0 } } }
+      }]
+    },
+    "PersonTrack": {
+      "type": "object",
+      "required": ["id", "captureId", "seed", "samples", "provenance"],
+      "properties": {
+        "id": { "type": "string" },
+        "captureId": { "type": "string" },
+        "seed": {
+          "type": "object",
+          "required": ["tUs", "detectionIndex"],
+          "properties": {
+            "tUs": { "type": "integer" }, "detectionIndex": { "type": "integer" },
+            "selectedBy": { "const": "user" }
+          }
+        },
+        "samples": { "type": "array", "items": { "$ref": "#/$defs/PoseSample" } },
+        "lostIntervals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "startUs": { "type": "integer" }, "endUs": { "type": "integer" },
+              "reason": { "enum": ["no_candidate", "ambiguous", "not_analyzed"] }
+            }
+          }
+        },
+        "provenance": { "$ref": "#/$defs/Provenance" }
+      }
+    },
+    "ContactEvent": {
+      "type": "object",
+      "required": ["id", "personTrackId", "limb", "target", "startUs", "endUs", "state", "provenance"],
+      "properties": {
+        "id": { "type": "string" },
+        "personTrackId": { "type": "string" },
+        "limb": { "enum": ["left_hand", "right_hand", "left_foot", "right_foot"] },
+        "target": { "type": "object" },
+        "startUs": { "type": "integer" }, "endUs": { "type": "integer" },
+        "state": { "enum": ["CONTACT", "UNKNOWN"] },
+        "footPoint": { "enum": ["toe_heel", "ankle_approx", "n/a"] },
+        "evidence": { "type": "object" },
+        "confidence": { "type": ["number", "null"] },
+        "provenance": { "$ref": "#/$defs/Provenance" }
+      }
+    },
+    "Attempt": {
+      "type": "object",
+      "required": ["id", "captureId", "routeVersionId", "outcome"],
+      "properties": {
+        "id": { "type": "string" },
+        "captureId": { "type": "string" },
+        "routeVersionId": { "type": "string" },
+        "startUs": { "type": ["integer", "null"] }, "endUs": { "type": ["integer", "null"] },
+        "boundarySource": { "enum": ["auto", "user"] },
+        "outcome": { "enum": ["unknown", "sent", "not_sent", "truncated"] }
+      }
+    },
+    "AnalysisRun": {
+      "type": "object",
+      "required": ["id", "kind", "inputSha256", "provider", "model", "schema", "status", "provenance"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "enum": ["pose_detection", "hold_candidates", "tracking", "contact", "stillness"] },
+        "inputSha256": { "type": "string" },
+        "provider": { "type": "string" },
+        "model": { "type": "string" },
+        "modelVersion": { "type": ["string", "null"] },
+        "configHash": { "type": ["string", "null"] },
+        "schema": { "const": "climbtriage.v1" },
+        "startedAt": { "type": ["string", "null"] },
+        "finishedAt": { "type": ["string", "null"] },
+        "status": { "enum": ["running", "succeeded", "failed", "cancelled"] },
+        "coverage": {
+          "type": ["object", "null"],
+          "properties": {
+            "framesRequested": { "type": "integer" },
+            "framesAnalyzed": { "type": "integer" },
+            "framesDropped": { "type": "integer" }
+          }
+        },
+        "outputRef": { "type": ["string", "null"] },
+        "provenance": { "$ref": "#/$defs/Provenance" }
+      }
+    },
+    "Correction": {
+      "type": "object",
+      "required": ["id", "seq", "createdAt", "target", "op", "payload"],
+      "properties": {
+        "id": { "type": "string" },
+        "seq": { "type": "integer", "minimum": 1 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "author": { "type": "string" },
+        "target": { "enum": ["wall", "route", "track"] },
+        "op": {
+          "enum": ["ADD_HOLD", "REMOVE_HOLD", "EDIT_HOLD", "SPLIT_HOLD", "MERGE_HOLDS", "SET_HOLD_KIND",
+                   "ADD_ROUTE_MEMBER", "REMOVE_ROUTE_MEMBER", "SET_START", "SET_FINISH", "SET_ROUTE_TYPE",
+                   "RESELECT_PERSON"]
+        },
+        "payload": { "type": "object" }
+      }
+    }
+  }
+}

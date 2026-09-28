@@ -1,0 +1,26 @@
+ClimbTriage
+Copyright 2026 the ClimbTriage authors.
+
+This project adapts ideas, request/response contracts and algorithms from:
+
+  vision-demos (https://github.com/jeremyipark/vision-demos)
+  Reviewed at commit 6e45309f9ab7f9b7b8707b128bb84294317609e8
+  Copyright Jeremy Park and contributors
+  Licensed under the Apache License, Version 2.0
+
+Files that port or adapt code from vision-demos say so in their header and
+name the source file. Algorithms were reimplemented rather than copied
+verbatim unless a header says otherwise. See docs/04-reference-coverage.md for
+the mapping.
+
+Third-party models and libraries (verified 2026-09-28; see
+docs/08-assumptions-risks.md for the evidence and open questions):
+
+  MediaPipe Tasks Vision (com.google.mediapipe:tasks-vision), Apache-2.0.
+  MediaPipe Pose Landmarker model (BlazePose GHUM 3D), Apache-2.0 per its
+    model card. The model card states the intended use is single-person video.
+  SAM 3.1 (facebook/sam3.1), Meta "SAM License" (custom; commercial use
+    permitted with restrictions). Only used via a server-side provider adapter.
+  ViTPose+ Large (usyd-community/vitpose-plus-large), Apache-2.0 weights;
+    trained on datasets (AI Challenger, MPII) with their own terms. Only used via
+    a server-side provider adapter, for baseline evaluation.

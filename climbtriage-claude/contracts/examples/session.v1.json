@@ -1,0 +1,114 @@
+{
+  "schema": "climbtriage.v1",
+  "capture": {
+    "id": "cap_01K6A0000000000000000000A1",
+    "createdAt": "2026-09-28T10:00:00Z",
+    "source": "imported",
+    "mediaSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "video": {
+      "widthPx": 1920, "heightPx": 1080, "rotationDeg": 90, "mirrored": false,
+      "displayWidthPx": 1080, "displayHeightPx": 1920, "durationUs": 100000,
+      "codec": "video/avc", "nominalFps": 30.0
+    },
+    "timebase": { "kind": "media_pts", "ptsUs": [0, 33366, 66733, 100100] },
+    "device": { "manufacturer": "example", "model": "golden-file", "sdkInt": 35 },
+    "cameraFacing": "back",
+    "stationaryClaim": true,
+    "stillness": { "verdict": "STILL", "maxShiftNorm": 0.002, "movedFrameTimesUs": [], "method": "blockmatch.v1" },
+    "depth": null,
+    "intrinsics": null,
+    "calibration": null
+  },
+  "wallVersions": [{
+    "id": "wv_01K6A0000000000000000000B1",
+    "wallId": "wall_01K6A0000000000000000000C1",
+    "version": 2,
+    "parentVersionId": "wv_01K6A0000000000000000000B0",
+    "reason": "correction",
+    "createdAt": "2026-09-28T10:05:00Z",
+    "coords": "wall_norm",
+    "referenceCaptureId": "cap_01K6A0000000000000000000A1",
+    "holds": [
+      {
+        "id": "h_01K6A0000000000000000000D1", "kind": "hold", "coords": "wall_norm",
+        "polygon": [[0.40, 0.80], [0.46, 0.80], [0.46, 0.85], [0.40, 0.85]],
+        "bbox": [0.40, 0.80, 0.06, 0.05],
+        "color": { "lab": [55.0, -40.0, 30.0], "hex": "#3E9A4C", "method": "median_lab.v1" },
+        "confidence": 0.91,
+        "provenance": { "kind": "model", "name": "facebook/sam3.1", "version": "gateway", "runId": "run_01K6A0000000000000000000E1", "configHash": "abc" },
+        "parents": [], "retired": false
+      },
+      {
+        "id": "h_01K6A0000000000000000000D2", "kind": "hold", "coords": "wall_norm",
+        "polygon": [[0.50, 0.30], [0.55, 0.30], [0.55, 0.34]],
+        "bbox": [0.50, 0.30, 0.05, 0.04],
+        "color": null,
+        "confidence": null,
+        "provenance": { "kind": "user", "name": "manual-add", "version": "1", "runId": null, "configHash": null },
+        "parents": [], "retired": false
+      }
+    ],
+    "sourceRunIds": ["run_01K6A0000000000000000000E1"],
+    "correctionSeq": 1
+  }],
+  "routeVersions": [{
+    "id": "rv_01K6A0000000000000000000F1",
+    "routeId": "route_01K6A0000000000000000000G1",
+    "version": 1,
+    "wallVersionId": "wv_01K6A0000000000000000000B1",
+    "name": "Green VB",
+    "grade": "VB",
+    "colorHint": "#3E9A4C",
+    "routeType": "boulder",
+    "members": ["h_01K6A0000000000000000000D1", "h_01K6A0000000000000000000D2"],
+    "startHoldIds": ["h_01K6A0000000000000000000D1"],
+    "finishHoldIds": ["h_01K6A0000000000000000000D2"],
+    "displayNumbers": { "h_01K6A0000000000000000000D1": 1, "h_01K6A0000000000000000000D2": 2 },
+    "rules": { "startRule": "hands_on_start_feet_off_floor", "finishRule": "matched_finish_dwell" }
+  }],
+  "personTracks": [{
+    "id": "pt_01K6A0000000000000000000H1",
+    "captureId": "cap_01K6A0000000000000000000A1",
+    "seed": { "tUs": 0, "detectionIndex": 0, "selectedBy": "user" },
+    "samples": [
+      {
+        "tUs": 0, "frameIndex": 0, "validity": "VALID", "coords": "frame_norm", "skeleton": "mediapipe33",
+        "landmarks": [{ "name": "left_wrist", "x": 0.42, "y": 0.81, "z": null, "visibility": 0.93, "presence": 0.99 }],
+        "bbox": [0.35, 0.40, 0.20, 0.50], "associationCost": 0.0
+      },
+      {
+        "tUs": 33366, "frameIndex": 1, "validity": "LOST", "coords": "frame_norm", "skeleton": "mediapipe33",
+        "landmarks": [], "bbox": null, "associationCost": null
+      }
+    ],
+    "lostIntervals": [{ "startUs": 33366, "endUs": 33366, "reason": "no_candidate" }],
+    "provenance": { "kind": "heuristic", "name": "climbtriage.person-tracker", "version": "1", "runId": "run_01K6A0000000000000000000E2", "configHash": "def" }
+  }],
+  "analysisRuns": [{
+    "id": "run_01K6A0000000000000000000E1",
+    "kind": "hold_candidates",
+    "inputSha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "provider": "vlmrun-gateway",
+    "model": "facebook/sam3.1",
+    "modelVersion": null,
+    "configHash": "abc",
+    "schema": "climbtriage.v1",
+    "startedAt": "2026-09-28T10:01:00Z",
+    "finishedAt": "2026-09-28T10:01:09Z",
+    "status": "succeeded",
+    "coverage": null,
+    "outputRef": "runs/run_01K6A0000000000000000000E1.json",
+    "provenance": { "kind": "model", "name": "facebook/sam3.1", "version": "gateway", "runId": "run_01K6A0000000000000000000E1", "configHash": "abc" }
+  }],
+  "corrections": [{
+    "id": "cor_01K6A0000000000000000000J1",
+    "seq": 1,
+    "createdAt": "2026-09-28T10:04:00Z",
+    "author": "local-user",
+    "target": "wall",
+    "op": "ADD_HOLD",
+    "payload": { "holdId": "h_01K6A0000000000000000000D2", "polygon": [[0.50, 0.30], [0.55, 0.30], [0.55, 0.34]], "kind": "hold" }
+  }],
+  "contactEvents": [],
+  "attempts": []
+}
