@@ -1,0 +1,21 @@
+# local toolchains, environments, data
+.toolchain/
+.venv/
+.data/
+**/.pytest-tmp/
+__pycache__/
+*.pyc
+
+# android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+.idea/
+*.iml
+.kotlin/
+
+# secrets
+.env
+*.egg-info/
+.pytest_cache/

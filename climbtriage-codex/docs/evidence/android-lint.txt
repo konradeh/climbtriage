@@ -1,0 +1,39 @@
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:28: Warning: A newer version of androidx.compose:compose-bom than 2025.04.01 is available: 2026.09.00 [GradleDependency]
+    implementation(platform("androidx.compose:compose-bom:2025.04.01"))
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:29: Warning: A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.13.0 [GradleDependency]
+    implementation("androidx.activity:activity-compose:1.10.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:34: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:35: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:36: Warning: A newer version of androidx.media3:media3-exoplayer than 1.6.1 is available: 1.11.1 [GradleDependency]
+    implementation("androidx.media3:media3-exoplayer:1.6.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:37: Warning: A newer version of androidx.media3:media3-ui than 1.6.1 is available: 1.11.1 [GradleDependency]
+    implementation("androidx.media3:media3-ui:1.6.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:38: Warning: A newer version of androidx.room:room-runtime than 2.7.1 is available: 2.8.5 [GradleDependency]
+    implementation("androidx.room:room-runtime:2.7.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:39: Warning: A newer version of androidx.room:room-ktx than 2.7.1 is available: 2.8.5 [GradleDependency]
+    implementation("androidx.room:room-ktx:2.7.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:40: Warning: A newer version of androidx.room:room-compiler than 2.7.1 is available: 2.8.5 [GradleDependency]
+    ksp("androidx.room:room-compiler:2.7.1")
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\timok\Desktop\projektid\climbtriage codex\android\app\build.gradle.kts:43: Warning: A newer version of com.google.mediapipe:tasks-vision than 0.10.21 is available: 1.0.0 [GradleDependency]
+    implementation("com.google.mediapipe:tasks-vision:0.10.21")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+0 errors, 10 warnings

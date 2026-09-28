@@ -1,0 +1,13 @@
+.venv/
+.tools/
+.gradle/
+**/build/
+android/local.properties
+backend/data/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+reference/
+android/app/src/main/assets/*.task
+artifacts/*.apk
